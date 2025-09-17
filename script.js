@@ -690,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
             URL.revokeObjectURL(imageUrl); // Libera a memória da URL temporária
 
         // Cria e configura o segmentador de imagens da Google
-            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm");
+            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm");
             imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
                 baseOptions: {
                     modelAssetPath: "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/1/selfie_segmenter.tflite",
