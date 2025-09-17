@@ -1,4 +1,4 @@
-import { ImageSegmenter, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.js";
+import { ImageSegmenter, FilesetResolver } from "https://storage.googleapis.com/mediapipe-tasks-vision/0.10.14/vision_bundle.mjs";
 document.addEventListener('DOMContentLoaded', () => {
     // === CONSTANTES E VARIÁVEIS GLOBAIS ===
     const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbx1l6QuqWnD4fg0XcUyGlGxnBpItqX5-Uw_fBhk9ov1SvuFTfDrY1Ok2YNlUwqC8wNdig/exec';
@@ -690,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
             URL.revokeObjectURL(imageUrl); // Libera a memória da URL temporária
 
         // Cria e configura o segmentador de imagens da Google
-            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+            const vision = await FilesetResolver.forVisionTasks("https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float32/1/selfie_segmenter.tflite");
             imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
                 baseOptions: {
                     modelAssetPath: "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/1/selfie_segmenter.tflite",
