@@ -1034,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Se o modo "remover fundo" foi ativado, processa a imagem primeiro
             if (shouldRemoveBackground) {
-                const imageBlob = await removeBgOpenSource(originalFile);
+                const imageBlob = await removeBgWithGoogle(originalFile);
                 if (imageBlob) {
                     fileToUpload = new File([imageBlob], originalFile.name, { type: imageBlob.type });
                 }
