@@ -671,24 +671,66 @@ document.addEventListener('DOMContentLoaded', () => {
         saveState();
     }
 
-    async function removeBgOpenSource(imageFile) {
+    async function removeBgWithGoogle(imageFile) {
         const loadingSpinner = document.getElementById('loadingSpinner');
         if (loadingSpinner) loadingSpinner.classList.remove('hidden');
 
+        let imageSegmenter;
+
         try {
-            // Voltando a usar a função global que a biblioteca cria
-            const imageBlob = await ImglyRemoveBackground(imageFile, {
-                publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/assets/'
+        // Carrega a imagem selecionada pelo usuário
+            const image = new Image();
+            const imageUrl = URL.createObjectURL(imageFile);
+        // Espera a imagem carregar completamente em memória
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = imageUrl;
             });
-        
-            return imageBlob;
+            URL.revokeObjectURL(imageUrl); // Libera a memória da URL temporária
+
+        // Cria e configura o segmentador de imagens da Google
+            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm");
+            imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
+                baseOptions: {
+                    modelAssetPath: "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/1/selfie_segmenter.tflite",
+                    delegate: "GPU"
+                },
+                outputCategoryMask: true,
+                outputConfidenceMasks: false
+            });
+
+        // Processa a imagem e obtém a máscara (quais pixels são pessoa e quais são fundo)
+            const result = await imageSegmenter.segment(image);
+            const categoryMask = result.categoryMask.getAsFloat32Array();
+
+        // Usa um canvas para aplicar a máscara e criar a imagem com fundo transparente
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0); // Desenha a imagem original
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+
+        // Itera sobre cada pixel, deixando o fundo transparente
+            for (let i = 0, j = 0; i < pixels.length; i += 4, j++) {
+            // Se o valor da máscara for 0, o pixel é fundo
+                if (categoryMask[j] === 0) {
+                    pixels[i + 3] = 0; // Define o canal Alfa (transparência) para 0
+            }
+        }
+            ctx.putImageData(imageData, 0, 0); // Coloca a imagem modificada de volta no canvas
+
+        // Converte o resultado do canvas em um arquivo Blob
+            return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 
         } catch (error) {
-            console.error('Erro ao remover o fundo com a biblioteca open-source:', error);
+            console.error('Erro ao remover o fundo com a biblioteca da Google:', error);
             alert(`Ocorreu um erro ao processar a imagem: ${error.message}`);
             return null;
         } finally {
-        // O spinner será escondido depois do upload para o Cloudinary
+            if (imageSegmenter) imageSegmenter.close(); // Libera a memória do modelo
         }
     }
     // --- API & DADOS ---
