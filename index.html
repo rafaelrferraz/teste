@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Roteiros</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/browser.js"></script>
+    
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <div class="top-bars-wrapper hidden">
+        <header class="main-header-bar">
+            <div class="header-group">
+                <div class="selection-toolbar-group">
+                    <div class="selection-dropdown-pair">
+                        <label for="themeDropdown"></label>
+                        <select id="themeDropdown">
+                            <option value="">Carregando temas...</option>
+                        </select>
+                    </div>
+                    <div class="selection-dropdown-pair">
+                        <select id="carouselDropdown"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="header-group right-aligned">
+                <div class="color-picker-container">
+                    <label for="colorPicker">Fundo:</label>
+                    <input type="color" id="colorPicker" value="#ffffff" title="Cor de Fundo">
+                    <button class="editor-btn color-shortcut" data-color="#F4F4F4" title="Cinza claro"><i
+                            class="fas fa-square-full" style="color: #F4F4F4; border: 1px solid #ccc;"></i></button>
+                    <button class="editor-btn color-shortcut" data-color="#C36640" title="Terracota"><i
+                            class="fas fa-square-full" style="color: #C36640;"></i></button>
+                </div>
+            </div>
+        </header>
+        <nav class="editor-toolbar">
+            <button id="saveBtn" class="editor-btn" title="Salvar Roteiro"><i class="fas fa-save"></i></button>
+            <button id="boldBtn" class="editor-btn" title="Negrito"><i class="fas fa-bold"></i></button>
+            <button id="italicBtn" class="editor-btn" title="Itálico"><i class="fas fa-italic"></i></button>
+            <button id="underlineBtn" class="editor-btn" title="Sublinhado"><i class="fas fa-underline"></i></button>
+            <div class="separator"></div>
+            <button id="leftAlignBtn" class="editor-btn" title="Alinhar à Esquerda"><i
+                    class="fas fa-align-left"></i></button>
+            <button id="centerAlignBtn" class="editor-btn" title="Centralizar"><i
+                    class="fas fa-align-center"></i></button>
+            <button id="rightAlignBtn" class="editor-btn" title="Alinhar à Direita"><i
+                    class="fas fa-align-right"></i></button>
+            <button id="justifyBtn" class="editor-btn" title="Justificar"><i class="fas fa-align-justify"></i></button>
+            <select id="lineHeightSelect" class="editor-select">
+                <option value="1">1</option>
+                <option value="1.2">1.2</option>
+                <option value="1.4" selected>1.4</option>
+                <option value="1.6">1.6</option>
+                <option value="1.8">1.8</option>
+                <option value="2">2</option>
+            </select>
+            <div class="separator"></div>
+            <select id="fontFamilySelect" class="editor-select">
+                <option value="">Fonte</option>
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Aguila">Aguila</option>
+                <option value="Aguila Bold">Aguila Bold</option>
+                <option value="Aguila Heavy">Aguila Heavy</option>
+                <option value="Aguila Medium">Aguila Medium</option>
+                <option value="Aguila Thin">Aguila Thin</option>
+                <option value="Cinzel">Cinzel</option>
+            </select>
+            <select id="fontSizeSelect" class="editor-select">
+                <option value="">Tamanho</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+                <option value="20">20</option>
+                <option value="22">22</option>
+                <option value="24">24</option>
+                <option value="26">26</option>
+                <option value="30">30</option>
+                <option value="36">36</option>
+                <option value="48">48</option>
+                <option value="60">60</option>
+            </select>
+            <input type="color" id="textColorPicker" class="editor-color-picker" value="#000000" title="Cor do Texto">
+            <button class="editor-btn text-color-shortcut" data-color="#F4F4F4" title="Cinza claro"><i
+                    class="fas fa-square-full" style="color: #F4F4F4; border: 1px solid #ccc;"></i></button>
+            <button class="editor-btn text-color-shortcut" data-color="#C36640" title="Terracota"><i
+                    class="fas fa-square-full" style="color: #C36640;"></i></button>
+            <button class="editor-btn text-color-shortcut" data-color="#000000" title="Preto"><i
+                    class="fas fa-square-full" style="color: #000000;"></i></button>
+            <div class="separator"></div>
+            <button id="bringToFrontBtn" title="Trazer para Frente" class="editor-btn"><i
+                    class="fas fa-angles-up"></i></button>
+            <button id="sendToBackBtn" title="Enviar para Trás" class="editor-btn"><i
+                    class="fas fa-angles-down"></i></button>
+            <span class="editor-label" title="Opacidade"><i class="fas fa-circle-half-stroke"></i></span>
+            <input type="range" id="opacitySlider" class="editor-slider" min="0" max="1" step="0.1" value="1"
+                title="Opacidade">
+            <div class="separator"></div>
+            <button type="button" class="editor-btn" id="addTextBtn" title="Adicionar Texto"><i
+                    class="fas fa-font"></i></button>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+            <button type="button" class="editor-btn" id="uploadBtn" title="Adicionar Imagem"><i
+                    class="fas fa-image"></i></button>
+            <button type="button" class="editor-btn" id="uploadAndRemoveBgBtn" title="Adicionar Imagem Sem Fundo"><i class="fas fa-wand-magic-sparkles"></i></button>
+            <button id="deleteBtn" class="editor-btn" title="Excluir Elemento" disabled><i
+                    class="fas fa-trash-alt"></i></button>
+            <div class="separator"></div>
+            <button id="resetZoomBtn" class="editor-btn" title="Resetar Zoom"><i class="fas fa-expand"></i></button>
+            <button type="button" class="editor-btn" id="addSlideBtn" title="Adicionar Novo Slide"><i
+                    class="fas fa-plus"></i></button>
+            <div class="separator"></div>
+
+            <button type="button" class="editor-btn" id="removeSlideBtn" title="Remover Slide Atual"><i
+                    class="fas fa-minus"></i></button>
+            <button id="exportPngBtn" class="editor-btn" title="Exportar como PNG"><i
+                    class="fas fa-file-arrow-down"></i></button>
+        </nav>
+    </div>
+
+    <div id="intro-screen">
+        <h2>Gerador de carrosséis</h2>
+        <div class="selection-group">
+            <select id="introThemeDropdown">
+                <option value="">Selecione um tema...</option>
+            </select>
+        </div>
+        <div class="selection-group" id="introCarouselContainer">
+            <select id="introCarouselDropdown" disabled>
+                <option value="">Selecione um Roteiro</option>
+            </select>
+        </div>
+        <button id="confirmBtn" class="hidden">Confirmar</button>
+    </div>
+
+    <main class="hidden">
+        <div class="carousel-content">
+            <div id="loadingSpinner" class="loading-spinner hidden">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="slide-wrapper">
+                <div id="zoom-pan-container">
+                    <div id="slideContainer">
+                        <div class="snap-line-v" id="snap-v-25"></div>
+                        <div class="snap-line-v" id="snap-v-50"></div>
+                        <div class="snap-line-v" id="snap-v-75"></div>
+                        <div class="snap-line-h" id="snap-h-25"></div>
+                        <div class="snap-line-h" id="snap-h-50"></div>
+                        <div class="snap-line-h" id="snap-h-75"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-buttons">
+                <button id="prevBtn" class="nav-btn" disabled>Anterior</button>
+                <span id="slideCounter"></span>
+                <button id="nextBtn" class="nav-btn" disabled>Próximo</button>
+            </div>
+    </main>
+
+    <footer>
+        <p>Para Larissa, com amor &#x2764;&#xFE0F;</p>
+    </footer>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+:root {
+    --primary-color: #C36640;
+    --background-color: #f0f2f5;
+    --toolbar-background: #ffffff;
+    --text-color: #333;
+    --border-color: #d9d9d9;
+    --hover-color: #e6f7ff;
+    --snap-line-color: #ff4d4f;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- CABEÇALHO E BARRAS DE FERRAMENTAS --- */
+.top-bars-wrapper {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: var(--toolbar-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    z-index: 100;
+}
+
+.main-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.header-group {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-grow: 1;
+}
+
+.header-group:last-child {
+    justify-content: flex-end;
+}
+
+.color-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border-color);
+    justify-content: center;
+}
+
+.separator {
+    width: 1px;
+    height: 22px;
+    background-color: var(--border-color);
+    margin: 0 0.5rem;
+}
+
+.editor-btn,
+.editor-select {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    font-size: 0.8rem;
+}
+
+.editor-btn {
+    width: 32px;
+}
+
+.editor-btn i {
+    font-size: 1em;
+}
+
+.editor-btn:hover:not(:disabled),
+.editor-select:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+}
+
+.editor-btn.active {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+.editor-btn:disabled {
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+.editor-select {
+    min-width: 100px;
+    padding: 0 8px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+}
+
+/* --- ÁREA PRINCIPAL (SLIDE) --- */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.slide-wrapper {
+    width: 320px;
+    height: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+#slideContainer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- ESTILOS PARA ITENS ARRASTÁVEIS --- */
+.draggable-item {
+    position: absolute;
+    touch-action: none;
+    user-select: none;
+    box-sizing: border-box;
+    border: 1px dashed transparent;
+}
+
+.draggable-item:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    cursor: move;
+}
+
+.draggable-item.selected {
+    border: 2px solid #ff4d4f;
+}
+
+.draggable-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+[contenteditable="true"]:focus {
+    outline: none;
+    border-color: #ff4d4f !important;
+    cursor: text;
+}
+
+/* --- ESTILOS PARA ROTAÇÃO --- */
+.rotation-handle {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    border: 1px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    display: none;
+}
+
+.draggable-item.selected .rotation-handle {
+    display: block;
+}
+
+.rotation-handle::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 10px;
+    background-color: var(--primary-color);
+}
+
+/* --- ESTILOS PARA ALÇA DE MOVIMENTO (NOVO) --- */
+.move-handle {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    border: 1px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    display: none;
+    z-index: 1000;
+}
+
+.draggable-item.is-text.selected .move-handle {
+    display: block;
+}
+
+.move-handle::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 10px;
+    background-color: var(--primary-color);
+}
+
+.draggable-item.is-text {
+    pointer-events: auto;
+    cursor: default; /* Remove o cursor de movimento do corpo do texto */
+}
+
+.draggable-item.is-text[contenteditable="true"] {
+    cursor: text; /* Mantém o cursor de texto ao editar */
+}
+
+/* --- ESTILOS PARA LINHAS MAGNÉTICAS --- */
+.snap-line-v,
+.snap-line-h {
+    position: absolute;
+    background-color: var(--snap-line-color);
+    display: none;
+    z-index: 999;
+}
+
+.snap-line-v.visible,
+.snap-line-h.visible {
+    display: block;
+}
+
+.snap-line-v {
+    width: 1px;
+    height: 100%;
+    top: 0;
+}
+
+.snap-line-h {
+    height: 1px;
+    width: 100%;
+    left: 0;
+}
+
+#snap-v-25 {
+    left: 25%;
+}
+
+#snap-v-50 {
+    left: 50%;
+}
+
+#snap-v-75 {
+    left: 75%;
+}
+
+#snap-h-25 {
+    top: 25%;
+}
+
+#snap-h-50 {
+    top: 50%;
+}
+
+#snap-h-75 {
+    top: 75%;
+}
+
+/* --- OUTROS ESTILOS --- */
+.carousel-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.nav-btn {
+    background-color: #fff;
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.nav-btn:disabled {
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#intro-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 500px;
+    margin: auto;
+}
+
+#intro-screen h2 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.selection-group {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.selection-group select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+#confirmBtn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+/* --- ESTILOS PARA ZOOM E PAN --- */
+#zoom-pan-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    cursor: default;
+}
+
+#slideContainer {
+    will-change: transform;
+    transform-origin: 0 0;
+}
+
+body.is-panning {
+    cursor: grab;
+}
+
+body.is-panning:active {
+    cursor: grabbing;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    color: #777;
+    font-size: 0.8rem;
+}
